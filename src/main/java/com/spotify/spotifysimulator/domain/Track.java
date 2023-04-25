@@ -1,26 +1,23 @@
 package com.spotify.spotifysimulator.domain;
 
 import java.time.Duration;
-import java.time.LocalTime;
 
-public class Track extends Time{
+public class Track implements Reproducible {
 
     private String name;
+    private Duration duration;
 
-    public Track(String name, int second, int minute, int hour) {
-        super(second, minute, hour);
+    public Track(String name, String minutes, String seconds) {
         this.name = name;
+        this.duration = Duration.parse("PT" + minutes + "M" + seconds + "S");
     }
 
-    public Track() {}
-
-    public LocalTime getDuration() {
-        return time;
+    public Duration getDuration() {
+        return duration;
     }
 
-    public LocalTime calculateTime(LocalTime increase) {
-        LocalTime defaultValue = LocalTime.of(0, 0, 0);
-        LocalTime resp = increase.plus(Duration.between(defaultValue, getDuration()));
-        return resp;
+    @Override
+    public Duration calculateDuration(Duration duration) {
+        return duration;
     }
 }

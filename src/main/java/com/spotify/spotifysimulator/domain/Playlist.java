@@ -1,28 +1,40 @@
 package com.spotify.spotifysimulator.domain;
 
-import java.time.LocalTime;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Playlist extends Track {
+public class Playlist implements Reproducible{
 
     private String name;
-    private LocalTime duration;
-    private List<Track> playlist;
+    private Duration duration;
+    private List<Reproducible> playlist;
 
     public Playlist(String name) {
-        super();
         this.name = name;
-        this.duration = LocalTime.of(0, 0, 0);
+        this.duration = Duration.ofMinutes(0);
         this.playlist = new ArrayList<>();
     }
 
-    public LocalTime getDuration() {
+    public void importMusic(Reproducible obj){
+            playlist.add(obj);
+            this.duration = calculateDuration(obj.getDuration());
+    }
+
+    public String getTime() {
+        return duration.toHoursPart() + ":" + duration.toMinutesPart() + ":" + duration.toSecondsPart();
+    }
+
+    @Override
+    public Duration getDuration() {
         return duration;
     }
 
-    public void addTrack(Track track) {
-        duration = track.calculateTime(duration);
-        playlist.add(track);
+    @Override
+    public Duration calculateDuration(Duration duration) {
+        for(Reproducible track : playlist){
+            duration = getDuration().plus(track.getDuration());
+        }
+        return duration;
     }
 }
